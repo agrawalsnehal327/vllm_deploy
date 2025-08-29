@@ -1,0 +1,33 @@
+replicaCount: 1
+
+image:
+  repository: vllm/vllm-openai
+  tag: gptoss
+  pullPolicy: IfNotPresent
+
+container:
+  name: gpt-oss-20b-helm
+  args:
+    - "--model"
+    - "openai/gpt-oss-20b"
+    - "--host"
+    - "0.0.0.0"
+    - "--port"
+    - "8000"
+    - "--trust-remote-code"
+  env:
+    NVIDIA_VISIBLE_DEVICES: "3,4"
+    TORCH_CUDA_ARCH_LIST: "9.0"
+
+resources:
+  limits:
+    nvidia.com/gpu: 2
+  requests:
+    nvidia.com/gpu: 2
+    cpu: "6"
+    memory: "64Gi"
+
+service:
+  type: NodePort
+  port: 8000
+  nodePort: 30503

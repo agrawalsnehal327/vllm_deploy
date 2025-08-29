@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gpt-helm.fullname" . }}
+  labels:
+    app: {{ include "gpt-helm.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "gpt-helm.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "gpt-helm.name" . }}
+    spec:
+      containers:
+        - name: {{ .Values.container.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: {{ .Values.container.args | toJson }}
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "{{ .Values.container.env.NVIDIA_VISIBLE_DEVICES }}"
+            - name: TORCH_CUDA_ARCH_LIST
+              value: "{{ .Values.container.env.TORCH_CUDA_ARCH_LIST }}"
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          resources:
+            limits:
+              nvidia.com/gpu: {{ index .Values.resources.limits "nvidia.com/gpu" }}
+            requests:
+              nvidia.com/gpu: {{ index .Values.resources.requests "nvidia.com/gpu" }}
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gpt-helm
+description: Helm chart for deploying vLLM GPT-OSS-20B
+type: application
+version: 0.1.0
+appVersion: "1.0"
