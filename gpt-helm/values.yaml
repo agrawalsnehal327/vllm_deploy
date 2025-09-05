@@ -6,15 +6,17 @@ image:
   pullPolicy: IfNotPresent
 
 container:
-  name: gpt-oss-20b-helm
+  name: gpt-oss-120b-helm
   args:
     - "--model"
-    - "openai/gpt-oss-20b"
+    - "openai/gpt-oss-120b"
     - "--host"
     - "0.0.0.0"
     - "--port"
     - "8000"
     - "--trust-remote-code"
+    - "--tensor-parallel-size"
+    - "2"
   env:
     NVIDIA_VISIBLE_DEVICES: "3,4"
     TORCH_CUDA_ARCH_LIST: "9.0"
@@ -27,7 +29,17 @@ resources:
     cpu: "6"
     memory: "64Gi"
 
+volumeMounts:
+  - name: dshm
+    mountPath: /dev/shm
+
+volumes:
+  - name: dshm
+    emptyDir:
+      medium: Memory
+      sizeLimit: 64Gi   # Increase /dev/shm to 64 GB
+
 service:
   type: NodePort
   port: 8000
-  nodePort: 30503
+  nodePort: 30509

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FastAPI Frontend</title>
+</head>
+<body>
+  <h1>FastAPI Frontend</h1>
+
+  <button onclick="callAPI()">Get API Response</button>
+  <p id="response">Response will appear here...</p>
+
+  <script>
+    async function callAPI() {
+      try {
+        let res = await fetch("http://127.0.0.1:8000/");  // change if your FastAPI runs on different endpoint
+        let data = await res.json();
+        document.getElementById("response").innerText = JSON.stringify(data);
+      } catch (err) {
+        document.getElementById("response").innerText = "Error: " + err;
+      }
+    }
+  </script>
+</body>
+</html>
